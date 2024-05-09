@@ -2,10 +2,9 @@ package com.personal.util;
 
 
 import com.google.gson.*;
-import com.personal.Task;
+import com.personal.model.Task;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class TaskJsonConverter {
