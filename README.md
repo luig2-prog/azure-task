@@ -37,39 +37,39 @@ If you need to create many tasks in Azure Devops and don't want to create them o
 
 - OpenJDK see [official documentation](https://openjdk.org/projects/jdk/22/)
 
-  ```sh
-    java -version
-  ```
+```sh
+java -version
+```
 
 - Maven see [official documentation](https://maven.apache.org/download.cgi)
 
-  ```sh
-    mvn -version
-  ```
+```sh
+mvn -version
+```
 
 ### Installation
 
 1. Clone the repository
 
-   ```sh
-   git clone https://github.com/luig2-prog/azure-task.git
-   ```
+```sh
+git clone https://github.com/luig2-prog/azure-task.git
+```
 
 #### Steps in command console
 
 1. Go to the root of the project and run the following command
 
-   ```sh
-   mvn clean package
-   ```
+```sh
+mvn clean package
+```
 
 2. Fill the information in the task.xlsx file
 
 3. Execute the generated .jar file
 
-    ```sh
-    java -jar /target/azure-task-1.0-SNAPSHOT.jar
-    ```
+```sh
+java -jar /target/azure-task-1.0-SNAPSHOT.jar
+```
 
 
 <p align="right">(<a href="#readme-top">go back up</a>)</p>
@@ -120,23 +120,23 @@ Si necesita crear muchas tareas en Azure Devops y no desea crearlas una por una,
 
 - OpenJDK ver [documentación oficial](https://openjdk.org/projects/jdk/22/)
 
-    ```sh
-    java -version
-    ```
+```sh
+java -version
+```
 
 - Maven consulte [documentación oficial] (https://maven.apache.org/download.cgi)
 
-    ```sh
-    mvn -version
-    ```
+```sh
+mvn -version
+```
 
 ### Instalación
 
 1. Clonar el repositorio
 
- ```sh
- git clone https://github.com/luig2-prog/azure-task.git
- ```
+```sh
+git clone https://github.com/luig2-prog/azure-task.git
+```
 
 #### Pasos en la consola de comandos
 
