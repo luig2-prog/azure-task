@@ -15,13 +15,95 @@
 
 ### English documentation
 
-# Create Azure Devops task with Java usinng API 
+# Azure DevOps Task Manager
 
-<a href="https://github.com/luig2-prog/azure-task">
-  <img width="300px" src="./files/img/azure-java.png" alt="Logo" width="800" />
-</a>
+A Java application for managing tasks in Azure DevOps. This application allows you to create and delete tasks in Azure DevOps by reading task data from a CSV file.
 
-If you need to create many tasks in Azure Devops and don't want to create them one by one, you can use this project. Using an Excel file with the information you can create tasks in a short time. For more information visit [Azure Documentation](https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/work-items?view=azure-devops-rest-7.1)
+## Features
+
+- Read task data from a CSV file
+- Create tasks in Azure DevOps
+- Delete tasks from Azure DevOps
+- Concurrent processing of tasks for better performance
+- Robust error handling and logging
+
+## Requirements
+
+- Java 17 or higher
+- Maven 3.6 or higher
+- Azure DevOps account with appropriate permissions
+- Personal Access Token (PAT) for Azure DevOps
+
+## CSV File Format
+
+The CSV file should have the following columns in order:
+
+1. Title
+2. Description
+3. AssignedTo
+4. IterationPath
+5. AreaPath
+6. OriginalEstimateHours
+7. RemainingHours
+8. ParentStory
+9. Organization
+10. Project
+11. Area
+12. Username
+13. Token
+
+Example:
+
+```csv
+Title,Description,AssignedTo,IterationPath,AreaPath,OriginalEstimateHours,RemainingHours,ParentStory,Organization,Project,Area,Username,Token
+Task 1,Description for task 1,user@example.com,Project\Iteration 1,Project\Area 1,8,8,12345,myorg,myproject,myarea,username,pat
+Task 2,Description for task 2,user@example.com,Project\Iteration 1,Project\Area 1,4,4,12345,myorg,myproject,myarea,username,pat
+```
+
+## Building the Application
+
+To build the application, run the following command:
+
+```bash
+mvn clean package
+```
+
+This will create a JAR file in the `target` directory.
+
+## Running the Application
+
+To run the application, use the following command:
+
+```bash
+java -jar target/azure-task-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+Make sure to place your CSV file named `tasks.csv` in the same directory as the JAR file.
+
+## Configuration
+
+The application reads the CSV file from the current directory. You can modify the file path in the `Main.java` file if needed.
+
+## Logging
+
+The application uses SLF4J with Logback for logging. Log files are created in the current directory.
+
+## Best Practices
+
+- Keep your Personal Access Token secure and never commit it to version control
+- Use a CSV file with a header row to ensure proper column mapping
+- Validate your CSV data before running the application
+- Use appropriate error handling when processing tasks
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Author
+
+Luis Hernandez Jimenez
+- Email: luisjimenezh8@gmail.com
+- LinkedIn: [Luis Hernandez Jimenez](https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/)
 
 </div>
 
@@ -91,89 +173,6 @@ Here's a quick guide:
 5. Make your Changes (`git commit -m 'Add: someAwesomeFeature'`)
 6. Push the Branch (`git push origin feature/CaracteristicaIncreible`)
 7. Open a [_pull request_](https://github.com/luig2-prog/azure-task/pulls)
-
-<div align="center">
-
-<hr>
-
-### Documentación en español
-
-# Crear tarea de Azure Devops con Java usando la API de Azure Devops
-
-<a href="https://github.com/luig2-prog/azure-task">
- <img width="300px" src="./files/img/azure-java.png" alt="Logotipo" width="800" />
-</a>
-
-Si necesita crear muchas tareas en Azure Devops y no desea crearlas una por una, puede usar este proyecto. Utilizando un archivo Excel con la información podrás crear tareas en poco tiempo. Para obtener más información, visite [Documentación de Azure](https://learn.microsoft.com/en-us/rest/api/azure/devops/wit/work-items?view=azure-devops-rest-7.1)
-
-</div>
-
-## Principales características
-
-- **Creación de tareas en Azure completando un archivo de Excel**: Puede crear N número de tareas completando un archivo de Excel y ejecutando el proyecto.
-
-<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
-
-## Para inicializar
-
-### Requisitos previos
-
-- OpenJDK ver [documentación oficial](https://openjdk.org/projects/jdk/22/)
-
-```sh
-java -version
-```
-
-- Maven consulte [documentación oficial] (https://maven.apache.org/download.cgi)
-
-```sh
-mvn -version
-```
-
-### Instalación
-
-1. Clonar el repositorio
-
-```sh
-git clone https://github.com/luig2-prog/azure-task.git
-```
-
-#### Pasos en la consola de comandos
-
-1. Vaya a la raíz del proyecto y ejecute el siguiente comando
-
- ```sh
-  mvn clean package
- ```
-
-2. Complete la información en el archivo task.xlsx.
-
-3. Ejecute el archivo .jar generado.
-
- ```sh
- java -jar /target/azure-task-1.0-SNAPSHOT.jar
- ```
-
-
-<p align="right">(<a href="#readme-top">volver arriba</a>)</p>
-
-## Contribuir al proyecto
-
-Las contribuciones son el motor que impulsa a la comunidad de código abierto, creando y enseñando aprendemos mucho más. Cada contribución que haces es inmensamente valorada. Si te animas, muchas gracias por ser parte de este viaje de colaboración y descubrimiento.
-
-¡Cualquier contribución que hagas será **muy apreciada**!
-
-Si tiene alguna sugerencia o mejora para el proyecto, cree un [_fork_](https://github.com/luig2-prog/azure-task/fork) del repositorio y cree una [_pull request_](https:// github.com/luig2-prog/azure-task/pulls). También puede simplemente abrir un [_issue_](https://github.com/luig2-prog/azure-task/issues) con la etiqueta "mejora".
-
-Aquí tienes una guía rápida:
-
-1. Haga un [_fork_](https://github.com/luig2-prog/azure-task/fork) del Proyecto
-2. Clona tu [_fork_](https://github.com/luig2-prog/azure-task/fork) (`git clone <fork URL>`)
-3. Agregue el repositorio original como remoto (`git remoto agregar upstream <URL del repositorio original>`)
-4. Cree su rama de funciones (`git switch -c feature/IncreibleCharacteristic`)
-5. Realice sus cambios (`git commit -m 'Add: someAwesomeFeature'`)
-6. Empuje la rama (`git push origin feature/CaracteristicaIncreible`)
-7. Abra una [_solicitud de extracción_] (https://github.com/luig2-prog/azure-task/pulls)
 
 **Collaborators!**
 

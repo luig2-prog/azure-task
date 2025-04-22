@@ -2,6 +2,7 @@ package com.personal.core;
 
 import com.personal.model.Task;
 import com.personal.util.TaskJsonConverter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.IOException;
@@ -12,8 +13,24 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+/**
+ * Service class for performing operations on Azure DevOps tasks.
+ * 
+ * <p>
+ * This class provides methods to create, update, and delete tasks in Azure DevOps.
+ * It uses the Azure DevOps REST API to perform these operations.
+ * </p>
+ */
+@Slf4j
 public class TaskActions {
+
+    private static final String API_VERSION = "7.1-preview.3";
+    private static final int MAX_CONCURRENT_REQUESTS = 5;
 
     /**
      * Reads tasks data from the provided Excel workbook and creates a list of tasks to be aggregated to Azure DevOps.
@@ -65,13 +82,6 @@ public class TaskActions {
 
     /**
      * Creates tasks in Azure DevOps.
-     * <p>
-     * This method takes a list of Task objects and creates corresponding tasks in Azure DevOps.
-     * Each task is created by sending a POST request to Azure DevOps REST API.
-     * <p>
-     * Author: Luis Hernandez Jimenez
-     * <p>
-     * Contact: luisjimenezh8@gmail.com <a href="https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/">LinkedIn</a>
      *
      * @param tasks The list of tasks to be created in Azure DevOps.
      * @throws IllegalArgumentException If the tasks list is null or empty.
@@ -83,40 +93,80 @@ public class TaskActions {
             throw new IllegalArgumentException("Task list cannot be null or empty");
         }
 
-        for (Task task : tasks) {
-            String url = "https://dev.azure.com/" + task.getOrganization() + "/" + task.getProject() + "/_apis/wit/workitems/$Task?api-version=7.1-preview.3";
-            System.out.println(url);
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Content-Type", "application/json-patch+json")
-                        .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((task.getUsername() + ":" + task.getToken()).getBytes()))
-                        .POST(HttpRequest.BodyPublishers.ofString(TaskJsonConverter.createTaskJson(task)))
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() == 200) {
-                    System.out.println("Task successfully created: " + task.getTitle());
-                } else {
-                    System.out.println("Error creating task: " + response.statusCode() + ", " + response.body());
-                }
-            } catch (IOException | InterruptedException e) {
-                System.out.println("Exception: " + e.getMessage());
-                throw e;
-            }
+        log.info("Creating {} tasks in Azure DevOps", tasks.size());
+        
+        // Filter out invalid tasks
+        List<Task> validTasks = tasks.stream()
+                .filter(Task::isValid)
+                .collect(Collectors.toList());
+        
+        if (validTasks.isEmpty()) {
+            log.warn("No valid tasks to create");
+            return;
+        }
+        
+        log.info("{} tasks are valid and will be created", validTasks.size());
+        
+        // Create a thread pool for concurrent requests
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_CONCURRENT_REQUESTS);
+        
+        try {
+            // Process tasks concurrently
+            List<CompletableFuture<Void>> futures = validTasks.stream()
+                    .map(task -> CompletableFuture.runAsync(() -> {
+                        try {
+                            createTaskInAzureDevOps(task);
+                        } catch (Exception e) {
+                            log.error("Error creating task: {}", task.getTitle(), e);
+                        }
+                    }, executor))
+                    .collect(Collectors.toList());
+            
+            // Wait for all tasks to complete
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            
+            log.info("All tasks have been processed");
+        } finally {
+            executor.shutdown();
+        }
+    }
+
+    /**
+     * Creates a single task in Azure DevOps.
+     *
+     * @param task The task to be created.
+     * @throws IOException If an error occurs while sending the HTTP request.
+     * @throws InterruptedException If the thread is interrupted while waiting for the HTTP response.
+     */
+    private static void createTaskInAzureDevOps(Task task) throws IOException, InterruptedException {
+        String url = String.format("https://dev.azure.com/%s/%s/_apis/wit/workitems/$Task?api-version=%s",
+                task.getOrganization(), task.getProject(), API_VERSION);
+        
+        log.debug("Creating task: {}", task.getTitle());
+        
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json-patch+json")
+                .header("Authorization", "Basic " + getBase64Credentials(task))
+                .POST(HttpRequest.BodyPublishers.ofString(TaskJsonConverter.createTaskJson(task)))
+                .build();
+        
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
+            log.info("Task successfully created: {}", task.getTitle());
+        } else {
+            log.error("Error creating task: {} - Status: {}, Response: {}", 
+                    task.getTitle(), response.statusCode(), response.body());
         }
     }
 
     /**
      * Deletes tasks from Azure DevOps.
-     * <p>
-     * This method takes a list of Task objects and deletes corresponding tasks in Azure DevOps
-     * by sending DELETE requests to Azure DevOps REST API.
-     * <p>
-     * Author: Luis Hernandez Jimenez
-     * <p>
-     * Contact: luisjimenezh8@gmail.com <a href="https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/">LinkedIn</a>
+     *
      * @param tasks The list of tasks to be deleted from Azure DevOps.
+     * @throws IllegalArgumentException If the tasks list is null or empty.
      * @throws IOException If an error occurs while sending the HTTP request.
      * @throws InterruptedException If the thread is interrupted while waiting for the HTTP response.
      */
@@ -125,61 +175,82 @@ public class TaskActions {
             throw new IllegalArgumentException("Task list cannot be null or empty");
         }
 
-        for (int i = 160; i < 236; i++) {
-            String url = "https://dev.azure.com/" + tasks.get(0).getOrganization() + "/" + tasks.get(0).getProject() + "/_apis/wit/workitems/" + i + "?api-version=7.1-preview.3";
-            System.out.println(url);
-            try {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Content-Type", "application/json-patch+json")
-                        .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((tasks.get(0).getUsername() + ":" + tasks.get(0).getToken()).getBytes()))
-                        .DELETE()
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() == 200) {
-                    System.out.println("Task successfully deleted: " + i + ": " + response.body());
-                } else {
-                    System.out.println("Error deleting task: " + response.statusCode() + ", " + response.body());
-                }
-            } catch (IOException | InterruptedException e) {
-                System.out.println("Exception: " + e.getMessage());
-                throw e;
-            }
+        log.info("Deleting tasks from Azure DevOps");
+        
+        // Get the first task to extract organization and project
+        Task firstTask = tasks.get(0);
+        String organization = firstTask.getOrganization();
+        String project = firstTask.getProject();
+        String credentials = getBase64Credentials(firstTask);
+        
+        // Create a thread pool for concurrent requests
+        ExecutorService executor = Executors.newFixedThreadPool(MAX_CONCURRENT_REQUESTS);
+        
+        try {
+            // Process tasks concurrently
+            List<CompletableFuture<Void>> futures = tasks.stream()
+                    .map(task -> CompletableFuture.runAsync(() -> {
+                        try {
+                            deleteTaskInAzureDevOps(task, organization, project, credentials);
+                        } catch (Exception e) {
+                            log.error("Error deleting task: {}", task.getTitle(), e);
+                        }
+                    }, executor))
+                    .collect(Collectors.toList());
+            
+            // Wait for all tasks to complete
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+            
+            log.info("All tasks have been processed for deletion");
+        } finally {
+            executor.shutdown();
         }
     }
 
+    /**
+     * Deletes a single task from Azure DevOps.
+     *
+     * @param task The task to be deleted.
+     * @param organization The Azure DevOps organization.
+     * @param project The Azure DevOps project.
+     * @param credentials The base64 encoded credentials.
+     * @throws IOException If an error occurs while sending the HTTP request.
+     * @throws InterruptedException If the thread is interrupted while waiting for the HTTP response.
+     */
+    private static void deleteTaskInAzureDevOps(Task task, String organization, String project, String credentials) 
+            throws IOException, InterruptedException {
+        String url = String.format("https://dev.azure.com/%s/%s/_apis/wit/workitems/%s?api-version=%s",
+                organization, project, task.getParentStory(), API_VERSION);
+        
+        log.debug("Deleting task: {}", task.getTitle());
+        
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json-patch+json")
+                .header("Authorization", "Basic " + credentials)
+                .DELETE()
+                .build();
+        
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        
+        if (response.statusCode() == 200 || response.statusCode() == 204) {
+            log.info("Task successfully deleted: {}", task.getTitle());
+        } else {
+            log.error("Error deleting task: {} - Status: {}, Response: {}", 
+                    task.getTitle(), response.statusCode(), response.body());
+        }
+    }
 
     /**
-     * Creates a JSON payload to be sent to Azure DevOps for creating a task.
-     * <p>
-     * This method takes a Task object and constructs a JSON payload according to the format
-     * expected by Azure DevOps REST API for creating a task.
-     * <p>
-     * Author: Luis Hernandez Jimenez
-     * Contact: luisjimenezh8@gmail.com <a href="https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/">LinkedIn</a>
-     * @param task The Task object containing task details.
-     * @return A JSON string representing the task to be created in Azure DevOps.
+     * Generates base64 encoded credentials for Azure DevOps authentication.
+     *
+     * @param task The task containing username and token.
+     * @return Base64 encoded credentials.
      */
-    private static String createTaskJson(Task task) {
-        return "[\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/System.Title\", \"value\": \" " + task.getTitle() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/System.Description\", \"value\": \"" + task.getDescription() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/System.AssignedTo\", \"value\": \"" + task.getAssignedTo() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/System.IterationPath\", \"value\": \"" + task.getIterationPath() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/System.AreaPath\", \"value\": \"" + task.getAreaPath() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/Microsoft.VSTS.Scheduling.OriginalEstimate\", \"value\": \"" + task.getOriginalEstimateHours() + "\" },\n" +
-                "    { \"op\": \"add\", \"path\": \"/fields/Microsoft.VSTS.Scheduling.RemainingWork\", \"value\": \"" + task.getRemainingHours() + "\" },\n" +
-                "    { \n" +
-                "        \"op\": \"add\", \n" +
-                "        \"path\": \"/relations/-\", \n" +
-                "        \"value\": {\n" +
-                "            \"rel\": \"System.LinkTypes.Hierarchy-Reverse\",\n" +
-                "            \"url\": \"https://dev.azure.com/" + task.getOrganization() + "/" + task.getProject() + "/" + task.getArea() + "/_apis/wit/workItems/" + task.getParentStory() + "\",\n" +
-                "            \"attributes\": { \"comment\": \"Added by automated script\" }\n" +
-                "        }\n" +
-                "    }\n" +
-                "]";
+    private static String getBase64Credentials(Task task) {
+        return java.util.Base64.getEncoder().encodeToString(
+                (task.getUsername() + ":" + task.getToken()).getBytes());
     }
 
     /**
