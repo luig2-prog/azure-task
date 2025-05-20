@@ -174,7 +174,88 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Documentación en Español
 
-*Esta sección está pendiente de traducción completa. Por favor, consulte la documentación en inglés mientras tanto.*
+## Descripción General
+
+Azure DevOps Task Manager es una herramienta diseñada para simplificar la creación y gestión de tareas en proyectos de Azure DevOps. Al proporcionar detalles de las tareas en formato de hoja de cálculo, puede automatizar la creación de múltiples tareas a la vez, ahorrando tiempo y reduciendo el esfuerzo manual.
+
+## Características Principales
+
+- 📊 Lectura de datos de tareas desde archivos Excel o CSV
+- ➕ Creación simultánea de múltiples tareas en Azure DevOps
+- ➖ Eliminación de tareas de Azure DevOps
+- ⚡ Procesamiento concurrente para mejor rendimiento
+- 🛡️ Manejo robusto de errores y registro de actividades
+
+## Requisitos
+
+- ☕ Java 17 o superior
+- 🛠️ Maven 3.6 o superior
+- 🔐 Cuenta de Azure DevOps con permisos adecuados
+- 🔑 Token de Acceso Personal (PAT) para Azure DevOps
+
+## Primeros Pasos
+
+### Prerrequisitos
+
+- OpenJDK - [documentación oficial](https://openjdk.org/projects/jdk/)
+  ```sh
+  java -version
+  ```
+
+- Maven - [documentación oficial](https://maven.apache.org/download.cgi)
+  ```sh
+  mvn -version
+  ```
+
+### Instalación
+
+1. Clonar el repositorio
+   ```sh
+   git clone https://github.com/luig2-prog/azure-task.git
+   ```
+
+2. Navegar al directorio del proyecto
+   ```sh
+   cd azure-task
+   ```
+
+3. Construir el proyecto
+   ```sh
+   mvn clean package
+   ```
+
+### Uso
+
+1. Prepare sus datos de tareas en el archivo Excel (`tasks.xlsx`) o archivo CSV (`tasks.csv`)
+
+2. Ejecute la aplicación:
+   ```sh
+   java -jar target/azure-task-1.0-SNAPSHOT-jar-with-dependencies.jar
+   ```
+
+## Formato de Archivo de Entrada
+
+### Formato de Archivo Excel
+
+El archivo Excel (`tasks.xlsx`) debe tener las siguientes columnas en orden:
+
+1. Title (Título)
+2. Description (Descripción)
+3. AssignedTo (Asignado a)
+4. IterationPath (Ruta de Iteración)
+5. AreaPath (Ruta de Área)
+6. OriginalEstimateHours (Horas de Estimación Original)
+7. RemainingHours (Horas Restantes)
+8. ParentStory (Historia Padre)
+9. Organization (Organización)
+10. Project (Proyecto)
+11. Area (Área)
+12. Username (Nombre de Usuario)
+13. Token (Token)
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - consulte el archivo LICENSE para obtener más detalles.
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
 
