@@ -6,8 +6,14 @@
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 # Azure DevOps Task Manager
+
+<img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java" />
+<img src="https://img.shields.io/badge/Azure_DevOps-0078D7?style=for-the-badge&logo=azure-devops&logoColor=white" alt="Azure DevOps" />
+<img src="https://img.shields.io/badge/Apache_Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white" alt="Maven" />
 
 A Java application for managing tasks in Azure DevOps. This application allows you to create and delete tasks in Azure DevOps by reading task data from an Excel or CSV file.
 
@@ -19,26 +25,28 @@ A Java application for managing tasks in Azure DevOps. This application allows y
 
 ## English Documentation
 
-## Overview
+## 📋 Overview
 
 Azure DevOps Task Manager is a tool designed to simplify the creation and management of tasks in Azure DevOps projects. By providing task details in a spreadsheet format, you can automate the creation of multiple tasks at once, saving time and reducing manual effort.
 
-## Key Features
+> "Code is like humor. When you have to explain it, it's bad." – Cory House
 
-- Read task data from Excel or CSV files
-- Create multiple tasks in Azure DevOps simultaneously
-- Delete tasks from Azure DevOps
-- Concurrent processing for better performance
-- Robust error handling and logging
+## ✨ Key Features
 
-## Requirements
+- 📊 Read task data from Excel or CSV files
+- ➕ Create multiple tasks in Azure DevOps simultaneously
+- ➖ Delete tasks from Azure DevOps
+- ⚡ Concurrent processing for better performance
+- 🛡️ Robust error handling and logging
 
-- Java 17 or higher
-- Maven 3.6 or higher
-- Azure DevOps account with appropriate permissions
-- Personal Access Token (PAT) for Azure DevOps
+## 🔧 Requirements
 
-## Getting Started
+- ☕ Java 17 or higher
+- 🛠️ Maven 3.6 or higher
+- 🔐 Azure DevOps account with appropriate permissions
+- 🔑 Personal Access Token (PAT) for Azure DevOps
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -80,7 +88,7 @@ Azure DevOps Task Manager is a tool designed to simplify the creation and manage
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Input File Format
+## 📄 Input File Format
 
 ### Excel File Format
 
@@ -110,27 +118,22 @@ Task 1,Description for task 1,user@example.com,Project\Iteration 1,Project\Area 
 Task 2,Description for task 2,user@example.com,Project\Iteration 1,Project\Area 1,4,4,12345,myorg,myproject,myarea,username,pat
 ```
 
-## Configuration
+## ⚙️ Configuration
 
 The application reads the input file from the current directory. You can modify the file path in the `Main.java` file if needed.
 
-## Logging
+## 📝 Logging
 
 The application uses SLF4J with Logback for logging. Log files are created in the current directory.
 
-## Best Practices
+## 💡 Best Practices
 
-- Keep your Personal Access Token secure and never commit it to version control
-- Use input files with header rows to ensure proper column mapping
-- Validate your data before running the application
-- Use appropriate error handling when processing tasks
+- 🔒 Keep your Personal Access Token secure and never commit it to version control
+- 📋 Use input files with header rows to ensure proper column mapping
+- ✅ Validate your data before running the application
+- 🛡️ Use appropriate error handling when processing tasks
 
-## 🛠️ Technology Stack
-
-[![Java][java-badge]][java-url]
-![Apache Maven][maven-url]
-
-## Contributing
+## 🤝 Contributing
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -152,13 +155,18 @@ Here's how to contribute:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Author
+## 👨‍💻 Author
 
-Luis Hernandez Jimenez
-- Email: luisjimenezh8@gmail.com
-- LinkedIn: [Luis Hernandez Jimenez](https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/)
+<div align="center">
+  <h3>Luis Hernandez Jimenez</h3>
+  <p>Full-stack developer with 5+ years of experience crafting efficient, scalable solutions.</p>
+  
+  [![GitHub](https://img.shields.io/badge/GitHub-luig2--prog-181717?style=for-the-badge&logo=github)](https://github.com/luig2-prog)
+  [![LinkedIn](https://img.shields.io/badge/LinkedIn-Luis_Hernandez-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/)
+  [![Email](https://img.shields.io/badge/Email-Contact_Me-D14836?style=for-the-badge&logo=gmail)](mailto:luisjimenezh8@gmail.com)
+</div>
 
-## License
+## 📜 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
@@ -169,6 +177,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 *Esta sección está pendiente de traducción completa. Por favor, consulte la documentación en inglés mientras tanto.*
 
 <p align="right">(<a href="#readme-top">volver arriba</a>)</p>
+
+---
+
+<div align="center">
+  <img src="https://komarev.com/ghpvc/?username=luig2-prog&label=Profile%20views&color=0e75b6&style=flat" alt="profile views" />
+</div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [java-url]: https://docs.oracle.com/en/java/
@@ -182,6 +196,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 [stars-url]: https://github.com/luig2-prog/azure-task/stargazers
 [issues-shield]: https://img.shields.io/github/issues/luig2-prog/azure-task.svg?style=for-the-badge
 [issues-url]: https://github.com/luig2-prog/azure-task/issues
-[stars-url]: https://github.com/luig2-prog/azure-task/stargazers
-[issues-shield]: https://img.shields.io/github/issues/midudev/la-velada-web-oficial.svg?style=for-the-badge
-[issues-url]: https://github.com/luig2-prog/azure-task/issues
+[license-shield]: https://img.shields.io/github/license/luig2-prog/azure-task.svg?style=for-the-badge
+[license-url]: https://github.com/luig2-prog/azure-task/blob/master/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://www.linkedin.com/in/luis-hernandez-jimenez-55986318a/
